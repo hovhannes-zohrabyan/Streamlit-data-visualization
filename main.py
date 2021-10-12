@@ -27,4 +27,4 @@ option = st.selectbox(
 st.write(df[df['ocean_proximity'] == option].head(20))
 
 
-st.button("Re-run")
+st.button("Restart the page")
