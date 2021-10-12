@@ -14,14 +14,17 @@ st.write(df.head(20))
 st.title('Median Income and House Value Plots')
 st.line_chart(df[['median_income', 'median_house_value']])
 
-if st.checkbox('Show dataframe'):
-    chart_data = pd.DataFrame(
-       np.random.randn(20, 3),
-       columns=['a', 'b', 'c'])
+st.title('Use checkbox to show or hide the chart')
+if st.checkbox('Show Chart'):
+    st.line_chart(df['median_house_value'])
 
-    chart_data
+st.title('Filter Dataset using Selectbox')
+option = st.selectbox(
+    'Which Ocean Proximity you want to see',
+     np.unique(df['ocean_proximity']))
 
-# progress_bar = st.sidebar.progress(0)
-# status_text = st.sidebar.empty()
+'You selected: ', option
+st.write(df[df['ocean_proximity'] == option].head(20))
+
 
 st.button("Re-run")
