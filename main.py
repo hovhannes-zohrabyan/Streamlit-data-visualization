@@ -21,7 +21,9 @@ st.map(map_data)
 st.title('Use checkbox to show or hide the chart')
 if st.checkbox('Show Chart'):
     # Draw the histogram
-    st.line_chart(df['median_house_value'])
+    hist_values = np.histogram(
+        df['median_house_value'], bins=24, range=(0, 24))[0]
+    st.bar_chart(df['median_house_value'])
 
 st.title('Filter Dataset using Selectbox')
 option = st.selectbox(
