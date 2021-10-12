@@ -5,6 +5,11 @@ import pandas as pd
 
 st.title('Test Application')
 
+st.write("Here's our first attempt at using data to create a table:")
+
+st.title('See Dataframe')
+df = pd.read_csv("Data/breast-cancer-winsconsin.csv")
+st.write(df.head(20))
 
 
 # progress_bar = st.sidebar.progress(0)
