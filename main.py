@@ -5,11 +5,12 @@ import pandas as pd
 
 # Read Data
 df = pd.read_csv("Data/housing.csv")
+column_selector = df.drop('ocean_proximity', axis=1)
 
 # Add Sidebar to the application
 sidebar_selectbox_value = st.sidebar.selectbox(
     'Please Choose column to plot in the second graph',
-    df.columns
+    column_selector.columns
 )
 
 st.title('Example service created to showcase some of the features of the application')
@@ -20,56 +21,60 @@ st.write("We will use a housing dataset used in book Hands On Machine Learning w
 st.subheader('First 20 rows of the dataset')
 st.write(df.head(20))
 
-st.subheader('Median Income and House Value Histograms')
-histogram_data, bins = np.histogram(df['median_income'], bins=45)
+st.subheader('Histogram of %s column from dataset' % sidebar_selectbox_value)
+histogram_data, bins = np.histogram(df[sidebar_selectbox_value], bins=45)
 st.bar_chart(histogram_data)
 
-st.title('Map Plot of points from dataset')
+st.subheader('Plot House points from dataset on map')
 map_data = df[['latitude', 'longitude']]
 st.map(map_data)
 
-st.title('Use checkbox to show or hide the chart')
-if st.checkbox('Show Chart'):
-    # Draw the histogram
-    hist_values = np.histogram(
-        df['median_house_value'], bins=24, range=(0, 24))[0]
-    st.bar_chart(df['median_house_value'])
-
-st.title('Filter Dataset using Selectbox')
+st.subheader('Filter ocean proximity using selectbox')
 option = st.selectbox(
     'Which Ocean Proximity you want to see',
-     np.unique(df['ocean_proximity']))
+    np.unique(df['ocean_proximity']))
 
 'You selected: ', option
 st.write(df[df['ocean_proximity'] == option].head(20))
 
-st.title("Example of Latex in webpage")
-st.latex(r'''
-         a + ar + a r^2 + a r^3 + \cdots + a r^{n-1} =
-         \sum_{k=0}^{n-1} ar^k =
-         a \left(\frac{1-r^{n}}{1-r}\right)''')
-
-st.title("Slider Control Example")
-x = st.slider('x')  # 👈 this is a widget
-st.write(x, 'squared is', x * x)
-
-
-st.title("Widgets can also be placed Side-by-Side for better view")
+st.subheader("See different ocean proximity points on map")
 left_column, right_column = st.columns(2)
-# You can use a column just like st.sidebar:
-
-# Or even better, call Streamlit functions inside a "with" block:
 with left_column:
     chosen = st.radio(
         'Choose Ocean Proximity Here', np.unique(df['ocean_proximity'])
     )
 
 with right_column:
-    len = len(df[df['ocean_proximity'] == chosen]['median_income'])
-    st.write("Number of Houses in this range is : %s" % (len))
+    len_data = len(df[df['ocean_proximity'] == chosen]['median_income'])
+    st.write("Number of Houses in this range is : %s" % (len_data))
     map_data = df[df['ocean_proximity'] == chosen][['latitude', 'longitude']]
     st.map(map_data)
 
+st.subheader("Control House price and see on map and datase")
+x = st.sidebar.slider('Choose minimal price of houses', min(df['median_house_value']), max(df['median_house_value']))
+left_column, right_column = st.columns(2)
+with left_column:
+    st.write("Number of rooms and bedrooms in houses with price over selected")
+    st.write(df[df['median_house_value'] > x][['total_rooms', 'total_bedrooms']])
 
+with right_column:
+    len_data = len(df[df['ocean_proximity'] == chosen]['median_income'])
+    st.write("Number of Houses in this range is : %s" % (len_data))
+    map_data = df[df['median_house_value'] > x][['latitude', 'longitude']]
+    st.map(map_data)
+
+
+st.subheader("Latex can also be added to the page")
+st.latex(r'''
+         a + ar + a r^2 + a r^3 + \cdots + a r^{n-1} =
+         \sum_{k=0}^{n-1} ar^k =
+         a \left(\frac{1-r^{n}}{1-r}\right)''')
+
+
+st.subheader('Use checkbox to show or hide the chart')
+if st.checkbox('Show Chart'):
+    # Draw the histogram
+    histogram_data, bins = np.histogram(df[sidebar_selectbox_value], bins=45)
+    st.bar_chart(histogram_data)
 
 st.button("Restart the page")
